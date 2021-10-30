@@ -2,11 +2,11 @@
 const mysql  = require('mysql')
 const config = require('../config')
 const connection = mysql.createConnection({
-  host: config.dbHost,
-  port: config.dbPort,
-  user: config.dbUser,
-  password: config.dbPass,
-  database: config.dbName,
+  host: '139.59.112.212',
+  port: '3306',
+  user: 'fbrv3',
+  password: '7e1PcwHnXBspQGNR',
+  database: 'fbr-v3',
   connectionLimit: 100,
   debug: false,
   queueLimit: 0
