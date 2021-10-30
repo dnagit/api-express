@@ -1,8 +1,8 @@
 var express = require('express');
 const baseResponse = require('../helpers/base-response.helper');
-//const usrModel = require('../model/usr');
+const usrModel = require('../model/usr');
 const result = {};
-/*result.getUserPage = async (req, res) => {
+result.getUserPage = async (req, res) => {
     let mysql = null;
      baseResponse.success = false;
             baseResponse.responseCode = 501;
@@ -30,15 +30,7 @@ const result = {};
         }
     }
      res.send(baseResponse);
-};*/
-result.getUserPage = async (req, res) => {
-    baseResponse.data = {}
-     baseResponse.success = true;
-    baseResponse.responseCode = 200;
-    baseResponse.message = 'Data not found';
- 
-
-     res.send(baseResponse);
 };
+
 //export default result;
 module.exports = result;
