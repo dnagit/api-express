@@ -1,5 +1,5 @@
 
-const mysql  = require('mysql')
+const mysql  = require('mysql2')
 const config = require('../config')
 const connection = mysql.createConnection({
   host: '139.59.112.212',
