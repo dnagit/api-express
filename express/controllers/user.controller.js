@@ -1,12 +1,33 @@
 var express = require('express');
 const baseResponse = require('../helpers/base-response.helper');
+const usrModel = require('../model/usr');
 const result = {};
-result.getUserPage = (req, res) => {
-    baseResponse.data = {};
-    baseResponse.message = 'done';
-    baseResponse.success = true;
-    baseResponse.responseCode = 200;
-    res.send(baseResponse);
+result.getUserPage = async (req, res) => {
+    let mysql = null;
+
+ 
+    try {
+        const rsDetail = await usrModel.getTypesFromDB();
+       
+        if (rsDetail.data) {
+           
+            
+            baseResponse.data = rsDetail.data;
+            baseResponse.success = true;
+            baseResponse.responseCode = 200;
+        } else {
+            baseResponse.success = false;
+            baseResponse.responseCode = 501;
+            baseResponse.message = 'Data not found';
+        }
+    } catch (error) {
+        console.log(`service index error : ${error}`);
+    } finally {
+        if (mysql) {
+            await mysql.release();
+        }
+    }
+    return res.send(baseResponse);
 };
 //export default result;
 module.exports = result;
