@@ -1,43 +1,19 @@
 
-//const mysqlConnector = require('../db/mysql-connector')
+const mysqlConnector = require('../db/mysql-connector')
 const baseResponse = require('../helpers/base-response.helper')
 const result = {};
-const mysql  = require('mysql2')
-const config = require('../config')
 
 result.getTypesFromDB = async function(){
-  console.log('config',config);
-
-  const connection = await mysql.createConnection({
-    host: config.dbHost,
-    port: config.dbPort,
-    user: config.dbUser,
-    password: config.dbPass,
-    database: config.dbName,
-    connectionLimit: 100,
-    debug: false,
-    queueLimit: 0
-  });   
-   connection.connect();
+  let mysql = null;
+       
     try {
-       const data = await new Promise((resolve, reject) => {
-        connection.query('SELECT * FROM `user_type` WHERE is_active = 1', (err, result, fields) => {
-          
-          if (err) reject(err);
-          resolve(result);
-        });
-      });
-     // await Promise.all();
-
-      
-       
-        console.log('data',data);
-        //const data = await mysql.query('SELECT * FROM `user_type` WHERE is_active = 1');
-       
+        mysql = await mysqlConnector.connection();
+        const data = await mysql.query("call sp_get_user_types()", []);
+       // console.log('data',data);
         if (Array.isArray(data) && data.length > 0) {
         
-          baseResponse.data = data;
-          baseResponse.success = true;
+            baseResponse.data = data;
+            baseResponse.success = true;
           }
     }catch(error){
         baseResponse.success = false;
@@ -45,12 +21,11 @@ result.getTypesFromDB = async function(){
         console.log(baseResponse.message);
 
     } finally {
-        if (connection) {
-          await connection.end();
+        if (mysql) {
+          await mysql.release();
         }
     }
     return baseResponse;
 
 }
-
 module.exports = result;
