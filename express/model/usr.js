@@ -7,12 +7,12 @@ result.getTypesFromDB = async function(){
        
     try {
         mysql = await mysqlConnector.connection();
-        const data = await mysql.query("call sp_get_user_types()", []);
-       // console.log('data',data);
+        const data = await mysql.query('SELECT * FROM `user_type` WHERE is_active = 1');
+        baseResponse.data = data;
+        baseResponse.success = true;
         if (Array.isArray(data) && data.length > 0) {
         
-            baseResponse.data = data;
-            baseResponse.success = true;
+           
           }
     }catch(error){
         baseResponse.success = false;

@@ -10,6 +10,7 @@ result.getUserPage = async (req, res) => {
  
     try {
         const rsDetail = await usrModel.getTypesFromDB();
+    
        
         if (rsDetail.data) {
            
