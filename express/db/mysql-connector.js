@@ -1,8 +1,19 @@
 
 const mysql  = require('mysql')
 const config = require('../config')
+const connection = mysql.createConnection({
+  host: config.dbHost,
+  port: config.dbPort,
+  user: config.dbUser,
+  password: config.dbPass,
+  database: config.dbName,
+  connectionLimit: 100,
+  debug: false,
+  queueLimit: 0
+});
 
-
+module.exports = {  connection };
+/*
 const pool = mysql.createPool({
   host: config.dbHost,
   port: config.dbPort,
@@ -65,5 +76,5 @@ const query = (sql, binding) => {
 pool.on('release', function (connection) {
   console.log('Connection %d released', connection.threadId);
 });
-module.exports = { pool, connection, query };
+module.exports = { pool, connection, query };*/
 
