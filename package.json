@@ -5,6 +5,7 @@
   "main": "functions/server.js",
   "scripts": {
     "build": "netlify-lambda build express",
+    "prd": "node --experimental-modules --es-module-specifier-resolution=node server-local.js",
     "start": "nodemon server-local.js"
   },
   "repository": {
