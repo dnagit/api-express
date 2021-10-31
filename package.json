@@ -34,6 +34,8 @@
   },
   "dependencies": {
     "cardinal": "^2.1.1",
+    "crypto": "^1.0.1",
+    "crypto-js": "^4.1.1",
     "mysql": "^2.18.1",
     "request": "^2.79.0"
   }

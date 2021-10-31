@@ -6,9 +6,9 @@ const config = require('../config')
 const pool = mysql.createPool({
   host: '139.59.112.212',
   port: '3306',
-  user: 'fbrv3',
-  password: '7e1PcwHnXBspQGNR',
-  database: 'fbr-v3',
+  user: 'promp',
+  password: 'promp1234',
+  database: 'sql_p',
   connectionLimit: 100,
   debug: false,
   queueLimit: 0
