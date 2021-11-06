@@ -106,4 +106,50 @@ result.addCompany = async (req, res) => {
    
     res.send(baseResponse);
 }
+
+result.getMeeting = async (req, res) => {
+    let mysql = null;
+    let company_id = req.params.id
+   
+    //var password = CryptoJS.AES.encrypt(req.body.password, 'promp').toString();
+  
+ 
+    try {
+        let resData=  await companyModel.getCompanyMeetingFromDB(company_id);
+        //console.log('resData',resData.data);
+       /* const taskAll = await Promise.all([
+            jobsModel.getJobCountFromDB(uid,1),
+            jobsModel.getJobCountFromDB(uid,2),
+            jobsModel.getJobCountFromDB(uid,3),
+            jobsModel.getJobCountFromDB(uid,4)
+           
+        ]);*/
+         //console.log('taskAll',taskAll);
+       /* baseResponse.data = {
+            assignedcount: taskAll[0].data.count,
+            pendingcount: taskAll[1].data.count,
+            processingcount: taskAll[2].data.count,
+            completecount: taskAll[3].data.count
+          
+           
+        };*/
+        if(resData.data){
+            baseResponse.data = resData.data;
+
+        }else{
+            baseResponse.data = {}
+        }
+        
+        baseResponse.success = true;
+        baseResponse.responseCode = 200;
+        baseResponse.message = 'Success';
+    } catch (error) {
+        console.log(`service index error : ${error}`);
+    } finally {
+        if (mysql) {
+            await mysql.release();
+        }
+    }
+     res.send(baseResponse);
+};
 module.exports = result;

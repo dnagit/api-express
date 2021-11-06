@@ -12,5 +12,5 @@ router.post('/jobs/v1/getjobs',jobsController.getJobs);
 router.get('/jobs/v1/get/:id',jobsController.getJob);
 router.get('/jobs/v1/getactions', jobsController.getActions)
 router.post('/company/v1/add', companyController.addCompany);
-
+router.get('/company/v1/getmeeting/:id', companyController.getMeeting);
 module.exports = router;

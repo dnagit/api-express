@@ -375,5 +375,58 @@ result.addCompany = async function(params){
     
     
 };
+result.getCompanyMeetingFromDB = async function(companyId){
+  let mysql = null;
+  let where = 'company.id = '+companyId;
+  let join = 'LEFT JOIN company_meeting cm ON company.id = cm.company_id';
+  let select = 'company.company_th, company.company_en, company.share_value,company.share_total, company.amount_cap, company.payment_percent, cm.*';
+  let base = {};
+  try {
+    mysql = await mysqlConnector.connection();
+
+    //where += ' and status_id = '+status_id;
+   /* if(status_id == 1){
+      where += ' and status_id in (1,2)';
+
+    }else if(status_id){
+      where += ' and status_id = '+status_id;
+
+    }*/
+
+      //const data = await mysql.query("call sp_get_user_types()", []);
+      const data = await mysql.rawquery("SELECT "+select+" FROM company "+join+" WHERE "+where);
+      if(data[0]){
+        const share = await mysql.rawquery("SELECT COUNT(id) total FROM company_shareholders  WHERE company_id=?",data[0].id);
+        if(share[0]){
+          data[0].share_count = share[0].total;
+          
+
+        }
+        const directors = await mysql.rawquery("SELECT * FROM company_director  WHERE company_id=?",data[0].id);
+        if(directors[0]){
+          data[0].directors = directors;
+          
+
+        }
+        
+
+      }
+    
+      base.data = data[0];
+      base.success = true;
+      
+  }catch(error){
+      base.success = false;
+      base.message = `service company.getCompanyMeetingFromDB error : ${error}`;
+   
+
+  } finally {
+      if (mysql) {
+        await mysql.release();
+    }
+  }
+  return base;
+
+}
 module.exports = result;
 
