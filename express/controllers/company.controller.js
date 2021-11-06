@@ -109,13 +109,13 @@ result.addCompany = async (req, res) => {
 
 result.getMeeting = async (req, res) => {
     let mysql = null;
-    let company_id = req.params.id
+    let jobId = req.params.id
    
     //var password = CryptoJS.AES.encrypt(req.body.password, 'promp').toString();
   
  
     try {
-        let resData=  await companyModel.getCompanyMeetingFromDB(company_id);
+        let resData=  await companyModel.getCompanyMeetingFromDB(jobId);
         //console.log('resData',resData.data);
        /* const taskAll = await Promise.all([
             jobsModel.getJobCountFromDB(uid,1),
