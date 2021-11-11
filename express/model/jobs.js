@@ -1,6 +1,7 @@
 
 const mysqlConnector = require('../db/mysql-connector')
-const baseResponse = require('../helpers/base-response.helper')
+const baseResponse = require('../helpers/base-response.helper');
+const { param } = require('../routes/api.route');
 const result = {};
 result.getJobCountFromDB = async function(uid, status_id){
     let mysql = null;
@@ -177,6 +178,85 @@ result.updateJobFromDB = async function(params){
     }
     return baseResponse;
 };
+result.addTransactionFromDB = async function(params){
+    let mysql = null;
+    let base = {};
+    let update = [];
+    try{
+        mysql = await mysqlConnector.connection();
+        const data = await mysql.rawquery("SELECT * FROM transaction WHERE job_id=?",[params.job_id]);
+        if (Array.isArray(data) && data.length > 0) {
+            let tran = data[0];
+            ///update.push('job_id = '+params.job_id);
+           // update.push('charge_id = "'+params.charge_id+'"');
+           // update.push('data = "'+params.data+'"');
+            console.log('update',update);
+            await mysql.rawquery("UPDATE transaction SET job_id=?, charge_id=?,data=?  WHERE id=?",[params.job_id, params.charge_id, params.data,tran.id]);
+        
+           // base.data = data;
+          
+        }else{
+            await mysql.rawquery("INSERT INTO transaction (job_id, charge_id, data) VALUES (?,?,?)",
+             [params.job_id, params.charge_id, params.data]
+        );
+           // base.data =[]
+
+        }
+        base.data = res
+        base.success = true;
+
+
+    }catch(err){
+        base.data = {}
+        base.success = false;
+        base.message = `service job.addTransactionFromDB error : ${err}`;
+        console.log(base.message);
+  
+
+    }finally{
+        if (mysql) {
+            await mysql.release();
+        }
+
+    }
+    return base;
+}
+result.getTransactionFromDB = async function(job_id){
+    let mysql = null;
+    let base = {}
+    try{
+        mysql = await mysqlConnector.connection();
+        const data = await mysql.rawquery("SELECT * FROM transaction WHERE job_id=?",[job_id]);
+       
+        if (Array.isArray(data) && data.length > 0) {
+            
+            base.data = data[0];
+            base.success = true;
+           // base.data = data;
+          
+        }else{
+            base.data = {};
+        }
+           // base.data =[]
+
+       
+
+
+    }catch(err){
+        base.data = {}
+        base.success = false;
+        base.message = `service user.getTransactionFromDB error : ${err}`;
+        console.log(base.message);
+        
+
+    }finally{
+        if (mysql) {
+            await mysql.release();
+        }
+
+    }
+    return base;
+}
 result.addJobFromDB = async function(params){
     let mysql = null;
     console.log('params',params);
@@ -215,4 +295,5 @@ result.addJobFromDB = async function(params){
     }
     return baseResponse;
 };
+
 module.exports = result;

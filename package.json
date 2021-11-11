@@ -33,6 +33,7 @@
     "serverless-http": "^2.3.0"
   },
   "dependencies": {
+    "axios": "^0.24.0",
     "cardinal": "^2.1.1",
     "crypto": "^1.0.1",
     "crypto-js": "^4.1.1",

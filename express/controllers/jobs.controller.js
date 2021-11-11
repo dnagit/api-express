@@ -1,6 +1,8 @@
 var express = require('express');
+var axios = require('axios');
 const baseResponse = require('../helpers/base-response.helper');
 const jobsModel = require('../model/jobs');
+const { param } = require('../routes/api.route');
 const result = {};
 result.getJobCount = async (req, res) => {
     let mysql = null;
@@ -39,6 +41,124 @@ result.getJobCount = async (req, res) => {
     }
      res.send(baseResponse);
 };
+result.createCharge = async (req,res)=>{
+    var data = JSON.stringify({
+        "card": req.body.card,
+        "description": req.body.description,
+        "amount": req.body.amount,
+        "currency": "THB",
+        "return_uri":req.body.return_uri,
+        "capture": false
+      });
+      
+      var config = {
+        method: 'post',
+        url: 'https://api.omise.co/charges',
+        headers: { 
+          'Authorization': 'Basic c2tleV90ZXN0XzVwczZ6NnUwaGFva3dkbzlnZGI=', 
+          'Content-Type': 'application/json'
+        },
+        data : data
+      };
+      
+     
+      try{
+        let response = await axios(config);
+        if(response.data){
+            let params = {
+                job_id:req.body.job_id,
+                charge_id:response.data.id,
+                data:JSON.stringify(response.data)
+            }
+            let trans = await jobsModel.addTransactionFromDB(params);
+        }
+
+        baseResponse.data = response.data;
+        baseResponse.success = true;
+        baseResponse.responseCode = 200;
+        baseResponse.message = 'TEst';
+        //console.log(JSON.stringify(response.data));
+      }catch(err){
+        baseResponse.data ={};
+        baseResponse.success = false;
+        baseResponse.responseCode = 200;
+        baseResponse.message = err;
+
+      }
+      res.send(baseResponse);
+    
+
+      
+
+      
+ 
+
+}
+result.checkCharge = async (req,res)=>{
+   /* var data = JSON.stringify({
+        "card": req.body.card,
+        "description": req.body.description,
+        "amount": req.body.amount,
+        "currency": "THB",
+        "return_uri":req.body.return_uri,
+        "capture": false
+      });*/
+      
+      baseResponse.data = {};
+     
+      
+     
+      try{
+        let tran= await jobsModel.getTransactionFromDB(req.params.job_id);
+        
+       // let response = await axios(config);
+        if(tran.data){
+            var config = {
+                method: 'get',
+                url: 'https://api.omise.co/charges/'+tran.data.charge_id,
+                headers: { 
+                  'Authorization': 'Basic c2tleV90ZXN0XzVwczZ6NnUwaGFva3dkbzlnZGI=', 
+                  'Content-Type': 'application/json'
+                },
+              };
+            let response = await axios(config);
+            if(response.data){
+                let params = {};
+                params.id = req.params.job_id;
+
+                if(response.data.status == 'successful' || response.data.status ==  'pending'){
+                    params.status_id = 3;
+
+                }else{
+                    params.status_id = 2;
+
+                }
+                await jobsModel.updateJobFromDB(params);
+                baseResponse.data = response.data;
+            }
+        }
+       
+      
+        baseResponse.success = true;
+        baseResponse.responseCode = 200;
+        baseResponse.message = 'TEst';
+        //console.log(JSON.stringify(response.data));
+      }catch(err){
+        baseResponse.data ={};
+        baseResponse.success = false;
+        baseResponse.responseCode = 200;
+        baseResponse.message = err;
+
+      }
+      res.send(baseResponse);
+    
+
+      
+
+      
+ 
+
+}
 result.getActions = async (req, res) => {
     let mysql = null;
    
